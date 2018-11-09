@@ -1,0 +1,24 @@
+language: go
+
+go:
+  - "1.x"
+  - "1.11.x"
+  - "1.10.x"
+  - master
+
+dist: xenial
+
+branches:
+  only:
+  - master
+  - /^[0-9.]+$/
+
+services:
+  - docker
+
+os:
+  - linux
+  # - windows
+  # - osx
+
+script: make ci
