@@ -18,7 +18,5 @@ services:
 
 os:
   - linux
-  # - windows
-  # - osx
 
-script: make ci
+script: make pr ci
