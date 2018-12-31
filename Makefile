@@ -14,17 +14,14 @@ SHA := $(shell git rev-parse HEAD)
 .DEFAULT_GOAL := pr
 
 .PHONY: pr
-pr: check_requirements_ci check_requirements_pr
+pr: check_requirements
 	go test ./...
 
 .PHONY: ci
-ci: pr
+ci:
 	docker build -t adobe/slh:latest -t "adobe/slh:${VERSION}" --build-arg FLAVOURS=${FLAVOURS} --build-arg VERSION=${VERSION} --build-arg DATE="${DATE}" --build-arg SHA=${SHA} .
 
-.PHONY: check_requirements_ci
-check_requirements_ci:
+.PHONY: check_requirements
+check_requirements:
 	@command -v docker >/dev/null 2>&1 || { echo >&2 "docker is required but not installed. Aborting."; exit 1; }
-
-.PHONY: check_requirements_pr
-check_requirements_pr:
 	@command -v go >/dev/null 2>&1 || { echo >&2 "go is required but not installed. Aborting."; exit 1; }

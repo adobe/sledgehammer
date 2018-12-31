@@ -1,24 +1,3 @@
 #!/usr/bin/env bash
 
-# move into correct folders
-
-mkdir -p src/github.com/adobe/sledgehammer
-mv -f * src/github.com/adobe/sledgehammer
-
-# install sledgehammer
-mkdir -p $(pwd)/bin
-docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/bin:/data adobe/slh
-export PATH="$(pwd)/bin:$PATH"
-export GOPATH="$(pwd)"
-
-# add mounts
-slh create mount /var/run/docker.sock
-slh create mount $(pwd)
-
-
-# install go
-slh install go --version "~1.11"
-
-# build
-cd src/github.com/adobe/sledgehammer
 make ci
