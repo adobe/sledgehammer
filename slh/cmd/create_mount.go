@@ -45,7 +45,7 @@ func CreateMountCommand(cfg *config.Config) *cobra.Command {
 	return createMountCommand
 }
 
-// CreateMount will list all mounts that are registered with Sledgehammer on this system
+// CreateMount will create a new mount if possible
 func CreateMount(cfg *config.Config, path string) error {
 	database, err := cfg.OpenDatabase()
 	if database != nil {
@@ -54,7 +54,7 @@ func CreateMount(cfg *config.Config, path string) error {
 	if err != nil {
 		return err
 	}
-
+	path = filepath.ToSlash(path)
 	absPath, err := filepath.Abs(path)
 	if err != nil {
 		return err
@@ -75,6 +75,7 @@ func CreateMount(cfg *config.Config, path string) error {
 
 func addDefaultMount(cfg *config.Config) error {
 	home, err := homedir.Dir()
+	home = filepath.ToSlash(home)
 	if err != nil {
 		return err
 	}

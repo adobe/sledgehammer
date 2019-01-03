@@ -35,6 +35,12 @@ func newRegistryCache(db *bolt.DB) Registry {
 	return Registry{db: db}
 }
 
+func (c *Registry) ClearAll() error {
+	return c.db.Update(func(tx *bolt.Tx) error {
+		return tx.DeleteBucket([]byte(RegistryBucket))
+	})
+}
+
 // Clear will clear the lastUpdate timestamp of the given registry
 func (r *Registry) Clear(reg registry.Registry) error {
 	return clear(r.db, RegistryBucket, getRegistryCacheEntry(reg))

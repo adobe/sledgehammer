@@ -44,6 +44,16 @@ func newVersionCache(db *bolt.DB) Version {
 	return Version{db: db}
 }
 
+func (c *Version) ClearAll() error {
+	return c.db.Update(func(tx *bolt.Tx) error {
+		err := tx.DeleteBucket([]byte(LocalVersionBucket))
+		if err != nil {
+			return err
+		}
+		return tx.DeleteBucket([]byte(RemoteVersionBucket))
+	})
+}
+
 // Clear will clear the cached local and remote versions of this tool
 func (v *Version) Clear(to tool.Tool) error {
 	err := clear(v.db, LocalVersionBucket, getLocalVersionCacheEntry(to))

@@ -47,6 +47,7 @@ func DeleteMount(cfg *config.Config, path string) error {
 		return err
 	}
 
+	path = filepath.ToSlash(path)
 	absPath, err := filepath.Abs(path)
 	if err != nil {
 		return err
