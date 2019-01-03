@@ -69,9 +69,9 @@ func (u *updateCommand) Execute(cfg *config.Config) error {
 	}
 
 	// clear caches
-	// caches.Container.ClearAll()
-	// caches.Registry.ClearAll()
-	// caches.Versions.ClearAll()
+	caches.Container.ClearAll()
+	caches.Registry.ClearAll()
+	caches.Versions.ClearAll()
 
 	// Custom wait group for all registries
 	var wg sync.WaitGroup

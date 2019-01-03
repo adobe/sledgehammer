@@ -40,6 +40,12 @@ func newContainerCache(db *bolt.DB) Container {
 	return Container{db: db}
 }
 
+func (c *Container) ClearAll() error {
+	return c.db.Update(func(tx *bolt.Tx) error {
+		return tx.DeleteBucket([]byte(DaemonContainerBucket))
+	})
+}
+
 // Clear will clear the entry of the given tool.
 // This is useful if you want to clear things
 func (c *Container) Clear(to tool.Tool, tag string) error {
