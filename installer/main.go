@@ -240,27 +240,33 @@ func copyBinary(fromPath string, toPath string, system string, writer io.Writer)
 	}
 	defer srcFile.Close()
 
-	destFile, err := os.Create(filepath.Join(toPath, "slh"))
+	targetFile := "slh"
+	if strings.Contains(system, "windows-") {
+		// is windows, so add the well known .exe suffix
+		targetFile += ".exe"
+	}
+
+	destFile, err := os.Create(filepath.Join(toPath, targetFile))
 	if err != nil {
-		fmt.Fprintln(writer, color.RedString("ERROR: "), "Could not create the binary '"+filepath.Join(toPath, "slh")+"'")
+		fmt.Fprintln(writer, color.RedString("ERROR: "), "Could not create the binary '"+filepath.Join(toPath, targetFile)+"'")
 		return ErrorCopyFailed
 	}
-	err = os.Chmod(filepath.Join(toPath, "slh"), 0777)
+	err = os.Chmod(filepath.Join(toPath, targetFile), 0777)
 	if err != nil {
-		fmt.Fprintln(writer, color.RedString("ERROR: "), "Could not make the binary '"+filepath.Join(toPath, "slh")+"' executable")
+		fmt.Fprintln(writer, color.RedString("ERROR: "), "Could not make the binary '"+filepath.Join(toPath, targetFile)+"' executable")
 		return ErrorCopyFailed
 	}
 	defer destFile.Close()
 
 	_, err = io.Copy(destFile, srcFile)
 	if err != nil {
-		fmt.Fprintln(writer, color.RedString("ERROR: "), "Could not copy the binary '"+filepath.Join(fromPath, "/slh/slh-"+system)+"' to '"+filepath.Join(toPath, "slh")+"'")
+		fmt.Fprintln(writer, color.RedString("ERROR: "), "Could not copy the binary '"+filepath.Join(fromPath, "/slh/slh-"+system)+"' to '"+filepath.Join(toPath, targetFile)+"'")
 		return ErrorCopyFailed
 	}
 
 	err = destFile.Sync()
 	if err != nil {
-		fmt.Fprintln(writer, color.RedString("ERROR: "), "Could not sync final bytes from '"+filepath.Join(fromPath, "/slh/slh-"+system)+"' to '"+filepath.Join(toPath, "slh")+"'")
+		fmt.Fprintln(writer, color.RedString("ERROR: "), "Could not sync final bytes from '"+filepath.Join(fromPath, "/slh/slh-"+system)+"' to '"+filepath.Join(toPath, targetFile)+"'")
 		return ErrorCopyFailed
 	}
 

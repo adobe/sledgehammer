@@ -125,7 +125,7 @@ func (cmd *installCommand) InstallKit(cfg *config.Config) error {
 func (cmd *installCommand) InstallTool(cfg *config.Config) error {
 
 	if len(cmd.alias) == 0 {
-		cmd.alias = cmd.tool
+		cmd.alias = utils.DecorateExecutable(cmd.tool)
 	}
 
 	database, err := cfg.OpenDatabase()
