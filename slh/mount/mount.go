@@ -13,6 +13,7 @@ package mount
 
 import (
 	"encoding/json"
+	"os"
 	"strings"
 
 	"github.com/adobe/sledgehammer/slh/config"
@@ -97,7 +98,7 @@ func (m *Mounts) Add(mount ...string) error {
 
 					//  now remove all mounts that are included in the new mount
 					for i := len(mounts) - 1; i >= 0; i-- {
-						if mounts[i] != mo && strings.HasPrefix(mounts[i]+"/", mo+"/") {
+						if mounts[i] != mo && strings.HasPrefix(pathSeparatedPath(mounts[i]), pathSeparatedPath(mo)) {
 							// do it in the background, otherwise we block the transaction
 							logrus.WithField("mount", m).WithField("sub", m).Debug("Removing sub since it is already included in mount")
 							mounts = append(mounts[:i], mounts[i+1:]...)
@@ -155,11 +156,18 @@ func (m *Mounts) Remove(mount string) error {
 
 func hasMount(mounts []string, mount string) bool {
 	for _, m := range mounts {
-		if m == mount || strings.HasPrefix(mount+"/", m+"/") {
+		if m == mount || strings.HasPrefix(pathSeparatedPath(mount), pathSeparatedPath(m)) {
 			logrus.WithField("toFind", mount).WithField("mounts", mounts).Debug("Found mount in mounts")
 			return true
 		}
 	}
 	logrus.WithField("toFind", mount).WithField("mounts", mounts).Debug("Mount not found in mounts")
 	return false
+}
+
+func pathSeparatedPath(path string) string {
+	if !strings.HasSuffix(path, string(os.PathSeparator)) {
+		return path + string(os.PathSeparator)
+	}
+	return path
 }

@@ -597,7 +597,7 @@ func Execute(containerID string, opt *ExecutionOptions) (int, error) {
 		}
 	}
 
-	workspace, err := os.Getwd()
+	workspace, err := utils.WorkingDirectory()
 	if err != nil {
 		return 1, err
 	}
@@ -613,8 +613,10 @@ func Execute(containerID string, opt *ExecutionOptions) (int, error) {
 		Cmd:          arguments,
 		Tty:          !isPipe,
 		Env:          utils.PrepareEnvironment(os.Environ()),
-		User:         strconv.Itoa(os.Getuid()) + ":" + strconv.Itoa(os.Getgid()),
 		WorkingDir:   workspace,
+	}
+	if os.Getuid() >= 0 && os.Getgid() >= 0 {
+		createExecConfig.User = strconv.Itoa(os.Getuid()) + ":" + strconv.Itoa(os.Getgid())
 	}
 	execConfig := docker.StartExecOptions{
 		ErrorStream:  opt.IO.Err,
@@ -688,16 +690,15 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 		}
 	}
 
-	workspace, err := os.Getwd()
+	workspace, err := utils.WorkingDirectory()
 	if err != nil {
-		return 1, nil
+		return 1, err
 	}
 
 	conf := &docker.Config{
 		Image:        FullImage(opt.Tool, opt.Version),
 		Cmd:          opt.Arguments,
 		Env:          utils.PrepareEnvironment(os.Environ()),
-		User:         strconv.Itoa(os.Getuid()) + ":" + strconv.Itoa(os.Getgid()),
 		WorkingDir:   workspace,
 		AttachStderr: !isPipe,
 		AttachStdout: !isPipe,
@@ -705,6 +706,9 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 		Tty:          !isPipe,
 		OpenStdin:    true,
 		StdinOnce:    isPipe,
+	}
+	if os.Getuid() >= 0 && os.Getgid() >= 0 {
+		conf.User = strconv.Itoa(os.Getuid()) + ":" + strconv.Itoa(os.Getgid())
 	}
 	if len(opt.Tool.Data().Entry) > 0 {
 		conf.Entrypoint = opt.Tool.Data().Entry

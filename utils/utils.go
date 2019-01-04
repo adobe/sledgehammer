@@ -114,11 +114,26 @@ func PrepareMounts(mos []string) []docker.HostMount {
 	for _, m := range mos {
 		mounts = append(mounts, docker.HostMount{
 			Source: m,
-			Target: m,
+			Target: ContainerPath(m),
 			Type:   "bind",
 			// MacOS only
 			// Consistency: "delegated",
 		})
 	}
 	return mounts
+}
+
+func ImportPath(path string) string {
+	// clean first
+	path = filepath.Clean(path)
+	path, _ = filepath.Abs(path)
+	return path
+}
+
+func WorkingDirectory() (string, error) {
+	workspace, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	return ContainerPath(filepath.ToSlash(workspace)), nil
 }

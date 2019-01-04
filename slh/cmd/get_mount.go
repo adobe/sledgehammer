@@ -12,8 +12,6 @@ written permission of Adobe.
 package cmd
 
 import (
-	"path/filepath"
-
 	"github.com/adobe/sledgehammer/slh/config"
 	"github.com/adobe/sledgehammer/slh/mount"
 	"github.com/adobe/sledgehammer/slh/out"
@@ -51,7 +49,7 @@ func GetMounts(cfg *config.Config) error {
 	}
 	table := out.NewTable("Mounts", "Mounts")
 	for _, m := range mounts {
-		table.Add(filepath.FromSlash(m))
+		table.Add(m)
 	}
 
 	cfg.Output.Set(table)
