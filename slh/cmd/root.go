@@ -125,6 +125,7 @@ func setConfigDir(cfg *config.Config) error {
 		cfg.ConfigDir = filepath.Join(path, ".slh")
 	}
 
+	cfg.ConfigDir = utils.ImportPath(cfg.ConfigDir)
 	logrus.WithField("confdir", cfg.ConfigDir).Info("Using configuration directory")
 	return nil
 }

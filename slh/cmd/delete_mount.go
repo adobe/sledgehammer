@@ -14,6 +14,8 @@ package cmd
 import (
 	"path/filepath"
 
+	"github.com/adobe/sledgehammer/utils"
+
 	"github.com/adobe/sledgehammer/slh/config"
 	"github.com/adobe/sledgehammer/slh/mount"
 	"github.com/spf13/cobra"
@@ -47,7 +49,7 @@ func DeleteMount(cfg *config.Config, path string) error {
 		return err
 	}
 
-	path = filepath.ToSlash(path)
+	path = utils.ImportPath(path)
 	absPath, err := filepath.Abs(path)
 	if err != nil {
 		return err

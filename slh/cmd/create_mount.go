@@ -16,6 +16,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/adobe/sledgehammer/utils"
+
 	"github.com/adobe/sledgehammer/slh/config"
 	"github.com/adobe/sledgehammer/slh/mount"
 	homedir "github.com/mitchellh/go-homedir"
@@ -54,7 +56,7 @@ func CreateMount(cfg *config.Config, path string) error {
 	if err != nil {
 		return err
 	}
-	path = filepath.ToSlash(path)
+	path = utils.ImportPath(path)
 	absPath, err := filepath.Abs(path)
 	if err != nil {
 		return err
@@ -75,7 +77,7 @@ func CreateMount(cfg *config.Config, path string) error {
 
 func addDefaultMount(cfg *config.Config) error {
 	home, err := homedir.Dir()
-	home = filepath.ToSlash(home)
+	home = utils.ImportPath(home)
 	if err != nil {
 		return err
 	}
