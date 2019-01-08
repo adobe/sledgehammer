@@ -75,7 +75,7 @@ func main() {
 		Env:         &env.OSENV{},
 		Systems:     strings.Split(flavours, ";"),
 		WorkingPath: "/",
-		InstallPath: "/data",
+		InstallPath: "/bin",
 	}
 
 	// call main install routine
@@ -97,7 +97,7 @@ func InstallSledgehammer(config Config) error {
 		return err
 	}
 
-	localPath, err := checkMounts(config.Writer, config.Docker)
+	localPath, err := checkMounts(&config)
 	if err != nil {
 		return err
 	}
@@ -170,32 +170,39 @@ func checkHostName(writer io.Writer) (string, error) {
 	return hostname, nil
 }
 
-func checkMounts(writer io.Writer, client docker.Client) (string, error) {
+func checkMounts(cfg *Config) (string, error) {
 	var localPath string
-	hostname, err := checkHostName(writer)
+	hostname, err := checkHostName(cfg.Writer)
 	if err != nil {
 		return "", err
 	}
 
 	// inspect this container so we can check the mounts
-	list, err := client.InspectContainer(hostname)
+	list, err := cfg.Docker.InspectContainer(hostname)
 	if err != nil {
-		fmt.Fprintln(writer, color.RedString("ERROR:"), "Could not inspect the running container, are you running me in docker?")
+		fmt.Fprintln(cfg.Writer, color.RedString("ERROR:"), "Could not inspect the running container, are you running me in docker?")
 		return "", ErrorContainerNotFound
 	}
 
-	// loop over every mount and check if :/data is mounted
-	dataMounted := false
+	// loop over every mount and check if :/bin is mounted
+	binMounted := false
 	for _, volume := range list.Mounts {
-		if volume.Destination == "/data" {
-			dataMounted = true
+		if volume.Destination == "/bin" {
+			binMounted = true
 			localPath = volume.Source
+		}
+		if volume.Destination == "/data" {
+			binMounted = true
+			localPath = volume.Source
+			if cfg.InstallPath == "/bin" {
+				cfg.InstallPath = "/data"
+			}
 		}
 	}
 
 	// if not mounted
-	if !dataMounted {
-		noVolumeMounted(writer)
+	if !binMounted {
+		noVolumeMounted(cfg.Writer)
 		return "", ErrorNoVolumeMounted
 	}
 	return localPath, nil
