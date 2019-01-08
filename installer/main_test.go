@@ -38,7 +38,7 @@ var dockerTests = []struct {
 		expects: func(mock *mocks.MockClient, systemMock *mocks.MockENV) {
 			mock.EXPECT().ListImages(gomock.Any()).Times(1).Return(nil, errors.New("TestError"))
 		},
-		contains: "1. Mount 'docker.sock' for accessing Docker with unix sockets.",
+		contains: "STEP 1 of 2:",
 		err:      ErrorDockerMountMissing,
 	},
 	{
@@ -51,14 +51,14 @@ var dockerTests = []struct {
 		err:      ErrorContainerNotFound,
 	},
 	{
-		name: ":/data not mounted",
+		name: ":/bin not mounted",
 		expects: func(mock *mocks.MockClient, systemMock *mocks.MockENV) {
 			mock.EXPECT().ListImages(gomock.Any()).Times(1).Return([]docker.APIImages{}, nil)
 			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
 				Mounts: []docker.Mount{},
 			}, nil)
 		},
-		contains: ":/data",
+		contains: ":/bin",
 		err:      ErrorNoVolumeMounted,
 	},
 	{
@@ -68,7 +68,7 @@ var dockerTests = []struct {
 			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
 				Mounts: []docker.Mount{
 					docker.Mount{
-						Destination: "/data",
+						Destination: "/bin",
 					},
 				},
 			}, nil)
@@ -85,7 +85,7 @@ var dockerTests = []struct {
 			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
 				Mounts: []docker.Mount{
 					docker.Mount{
-						Destination: "/data",
+						Destination: "/bin",
 					},
 				},
 			}, nil)
@@ -103,7 +103,7 @@ var dockerTests = []struct {
 			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
 				Mounts: []docker.Mount{
 					docker.Mount{
-						Destination: "/data",
+						Destination: "/bin",
 					},
 				},
 			}, nil)
@@ -121,7 +121,7 @@ var dockerTests = []struct {
 			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
 				Mounts: []docker.Mount{
 					docker.Mount{
-						Destination: "/data",
+						Destination: "/bin",
 					},
 				},
 			}, nil)
@@ -137,7 +137,7 @@ var dockerTests = []struct {
 			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
 				Mounts: []docker.Mount{
 					docker.Mount{
-						Destination: "/data",
+						Destination: "/bin",
 					},
 				},
 			}, nil)
@@ -146,42 +146,57 @@ var dockerTests = []struct {
 		contains: "Could not open the binary",
 		err:      ErrorCopyFailed,
 	},
-	// {
-	// 	name: "positive install - auto detect",
-	// 	expects: func(mock *mocks.MockClient, systemMock *mocks.MockENV) {
-	// 		mock.EXPECT().ListImages(gomock.Any()).Times(1).Return([]docker.APIImages{}, nil)
-	// 		mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
-	// 			Mounts: []docker.Mount{
-	// 				docker.Mount{
-	// 					Destination: "/data",
-	// 				},
-	// 			},
-	// 		}, nil)
-	// 		systemMock.EXPECT().GetSystem().Times(1).Return("foo-bar", true)
-	// 	},
-	// 	contains: "Sledgehammer installed, have fun!",
-	// },
-	// {
-	// 	name: "positive install - custom system",
-	// 	expects: func(mock *mocks.MockClient, systemMock *mocks.MockENV) {
-	// 		mock.EXPECT().ListImages(gomock.Any()).Times(1).Return([]docker.APIImages{}, nil)
-	// 		mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
-	// 			Mounts: []docker.Mount{
-	// 				docker.Mount{
-	// 					Destination: "/data",
-	// 				},
-	// 				docker.Mount{
-	// 					Source:      "/var/run/docker.sock",
-	// 					Destination: "/var/run/docker.sock",
-	// 				},
-	// 			},
-	// 		}, nil)
-	// 		systemMock.EXPECT().GetSystem().Times(1).Return("", true)
-	// 		mock.EXPECT().Version().Times(1).Return(&docker.Env{"Os=foo", "Arch=bar"}, nil)
-	// 		mock.EXPECT().Info().Times(1).Return(&docker.DockerInfo{}, nil)
-	// 	},
-	// 	contains: "Sledgehammer installed, have fun!",
-	// },
+	{
+		name: "positive install - auto detect",
+		expects: func(mock *mocks.MockClient, systemMock *mocks.MockENV) {
+			mock.EXPECT().ListImages(gomock.Any()).Times(1).Return([]docker.APIImages{}, nil)
+			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
+				Mounts: []docker.Mount{
+					docker.Mount{
+						Destination: "/bin",
+					},
+				},
+			}, nil)
+			systemMock.EXPECT().GetSystem().Times(1).Return("foo-bar", true)
+		},
+		contains: "Sledgehammer installed, call it with 'slh'",
+	},
+	{
+		name: "positive install - auto detect with data",
+		expects: func(mock *mocks.MockClient, systemMock *mocks.MockENV) {
+			mock.EXPECT().ListImages(gomock.Any()).Times(1).Return([]docker.APIImages{}, nil)
+			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
+				Mounts: []docker.Mount{
+					docker.Mount{
+						Destination: "/data",
+					},
+				},
+			}, nil)
+			systemMock.EXPECT().GetSystem().Times(1).Return("foo-bar", true)
+		},
+		contains: "Sledgehammer installed, call it with 'slh'",
+	},
+	{
+		name: "positive install - custom system",
+		expects: func(mock *mocks.MockClient, systemMock *mocks.MockENV) {
+			mock.EXPECT().ListImages(gomock.Any()).Times(1).Return([]docker.APIImages{}, nil)
+			mock.EXPECT().InspectContainer(gomock.Any()).Times(1).Return(&docker.Container{
+				Mounts: []docker.Mount{
+					docker.Mount{
+						Destination: "/bin",
+					},
+					docker.Mount{
+						Source:      "/var/run/docker.sock",
+						Destination: "/var/run/docker.sock",
+					},
+				},
+			}, nil)
+			systemMock.EXPECT().GetSystem().Times(1).Return("", true)
+			mock.EXPECT().Version().Times(1).Return(&docker.Env{"Os=foo", "Arch=bar"}, nil)
+			mock.EXPECT().Info().Times(1).Return(&docker.DockerInfo{}, nil)
+		},
+		contains: "Sledgehammer installed, call it with 'slh'",
+	},
 }
 
 func TestInstaller(t *testing.T) {

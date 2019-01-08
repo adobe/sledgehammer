@@ -22,9 +22,7 @@ import (
 
 func printFooter(writer io.Writer) {
 	fmt.Fprintln(writer, color.GreenString("INFO: "))
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "Installed 'slh' to the local directory, call it with 'slh'")
-	fmt.Fprintln(writer, color.GreenString("INFO: "))
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "Sledgehammer installed, have fun!")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "Sledgehammer installed, call it with 'slh'")
 }
 
 func printHeader(writer io.Writer) {
@@ -38,43 +36,32 @@ func dockerNotInstalled(writer io.Writer) {
 }
 
 func noVolumeMounted(writer io.Writer) {
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "We could not detect a location to save the executable to.")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "Mount a local directory in on you computer to ':/data'")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "STEP 2 of 2:")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "Please provide a local directory for the `slh` executable")
+	fmt.Fprintln(writer, color.GreenString("INFO: "))
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "Mount a local directory in on you computer to ':/bin'")
 	fmt.Fprintln(writer, color.GreenString("INFO: "))
 	fmt.Fprintln(writer, color.GreenString("INFO: "), "Simplest syntax:")
 	fmt.Fprintln(writer, color.GreenString("INFO: "), "	docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "		-v <YOUR_LOCAL_PATH>:/data")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "		-v <YOUR_LOCAL_PATH>:/bin")
 	fmt.Fprintln(writer, color.GreenString("INFO: "), "		adobe/slh")
 }
 
 func noSystemSelected(writer io.Writer, localPath string, systems []string) {
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "If you want to manually select a system, choose from the following:")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "Available systems:")
 	fmt.Fprintln(writer, color.GreenString("INFO: "))
-	for _, data := range systems {
-		fmt.Fprintln(writer, color.GreenString("INFO: "), "	- "+data)
+	for _, bin := range systems {
+		fmt.Fprintln(writer, color.GreenString("INFO: "), "	- "+bin)
 	}
-	fmt.Fprintln(writer, color.GreenString("INFO: "))
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "with:")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "	docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "		-v "+localPath+":/data")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "		-e SYSTEM=<YOUR_SYSTEM>")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "		adobe/slh")
-
 }
 
 func dockerMountMissing(writer io.Writer) {
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "You are missing a mandatory parameter:")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "	1. Mount 'docker.sock' for accessing Docker with unix sockets.")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "	2. Or, set DOCKER_HOST to Docker's location (unix or tcp).")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "STEP 1 of 2:")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "Please provide the docker socket")
 	fmt.Fprintln(writer, color.GreenString("INFO: "))
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "Mount Syntax:")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "	Start with 'docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock ...")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "For most cases you just need to add the /var/run/docker.sock location:")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "  'docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock adobe/slh'")
 	fmt.Fprintln(writer, color.GreenString("INFO: "))
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "DOCKER_HOST Syntax:")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "	Start with 'docker run -it --rm -e DOCKER_HOST=<daemon-location> ...")
-	fmt.Fprintln(writer, color.GreenString("INFO: "))
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "Possible root causes:")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "	1. Your admin has not granted permissions to /var/run/docker.sock.")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "	2. You passed '--user uid:gid' with bad values.")
-	fmt.Fprintln(writer, color.GreenString("INFO: "), "	3. Your firewall is blocking TCP ports for accessing Docker daemon.")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "If you know what you are doing, you can also add the DOCKER_HOST:")
+	fmt.Fprintln(writer, color.GreenString("INFO: "), "	 'docker run -it --rm -e DOCKER_HOST=<daemon-location> adobe/slh")
 }
