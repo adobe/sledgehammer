@@ -21,8 +21,10 @@ type Client interface {
 	ListContainers(opts docker.ListContainersOptions) ([]docker.APIContainers, error)
 	CreateExec(opts docker.CreateExecOptions) (*docker.Exec, error)
 	StartExecNonBlocking(id string, opts docker.StartExecOptions) (docker.CloseWaiter, error)
+	StartExec(id string, opts docker.StartExecOptions) error
 	InspectContainer(id string) (*docker.Container, error)
 	AttachToContainerNonBlocking(opts docker.AttachToContainerOptions) (docker.CloseWaiter, error)
+	AttachToContainer(opts docker.AttachToContainerOptions) error
 	RemoveContainer(opts docker.RemoveContainerOptions) error
 	PullImage(opts docker.PullImageOptions, auth docker.AuthConfiguration) error
 	InspectExec(id string) (*docker.ExecInspect, error)

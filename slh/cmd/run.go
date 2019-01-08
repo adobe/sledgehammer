@@ -18,7 +18,6 @@ import (
 	"github.com/fsouza/go-dockerclient"
 
 	"github.com/adobe/sledgehammer/slh/cache"
-	"github.com/adobe/sledgehammer/slh/out"
 
 	"github.com/adobe/sledgehammer/slh/config"
 	"github.com/adobe/sledgehammer/slh/mount"
@@ -171,7 +170,6 @@ func (r *RunCmd) Execute(cfg *config.Config) error {
 	logrus.Info("Potential pull done")
 
 	cfg.Output.ExitCode = exitCode
-	cfg.Output.Set(out.NewNewLine())
 	return err
 }
 

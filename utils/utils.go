@@ -95,13 +95,19 @@ func PrepareEnvironment(envs []string) []string {
 
 OUTER:
 	for _, env := range envs {
+		// simple blacklist for windows atm
+		if strings.HasPrefix(env, "=") {
+			continue OUTER
+		}
 		for _, noEnv := range noEnv {
 			if strings.HasPrefix(env, noEnv) {
 				dockerEnvs = append(dockerEnvs, "SLH_HOST_"+env)
+				logrus.WithField("var", "SLH_HOST_"+env).Debugln("Append variable to env")
 				continue OUTER
 			}
 		}
 		dockerEnvs = append(dockerEnvs, env)
+		logrus.WithField("var", env).Debugln("Append variable to env")
 	}
 
 	return dockerEnvs
@@ -114,7 +120,7 @@ func PrepareMounts(mos []string) []docker.HostMount {
 	for _, m := range mos {
 		mounts = append(mounts, docker.HostMount{
 			Source: m,
-			Target: ContainerPath(m),
+			Target: ContainerPath(filepath.ToSlash(m)),
 			Type:   "bind",
 			// MacOS only
 			// Consistency: "delegated",

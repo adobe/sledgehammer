@@ -12,7 +12,6 @@ written permission of Adobe.
 package cmd
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 
@@ -136,7 +135,7 @@ func output(cfg *config.Config) error {
 		if cfg.Output.Element != nil {
 			cfg.Output.Render()
 		} else {
-			return errors.New("No output defined")
+			logrus.Warn("No output defined!")
 		}
 	}
 	return nil

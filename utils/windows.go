@@ -16,10 +16,10 @@ func DecorateExecutable(name string) string {
 }
 
 func ContainerPath(path string) string {
-	// C:/Users/labuser -> /slh/mnt/C/Users/labuser
+	// C:/Users/labuser -> /slh_mnt/C/Users/labuser
 	vol := filepath.VolumeName(path)
 	if len(vol) == 2 {
-		path = strings.Replace(path, vol, fmt.Sprintf("/slh/mnt/%v", []rune(vol)[0]), 1)
+		path = strings.Replace(path, vol, fmt.Sprintf("/slh_mnt/%s", string([]rune(vol)[0])), 1)
 	}
 	return path
 }
