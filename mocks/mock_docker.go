@@ -33,6 +33,18 @@ func (m *MockClient) EXPECT() *MockClientMockRecorder {
 	return m.recorder
 }
 
+// AttachToContainer mocks base method
+func (m *MockClient) AttachToContainer(arg0 go_dockerclient.AttachToContainerOptions) error {
+	ret := m.ctrl.Call(m, "AttachToContainer", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AttachToContainer indicates an expected call of AttachToContainer
+func (mr *MockClientMockRecorder) AttachToContainer(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachToContainer", reflect.TypeOf((*MockClient)(nil).AttachToContainer), arg0)
+}
+
 // AttachToContainerNonBlocking mocks base method
 func (m *MockClient) AttachToContainerNonBlocking(arg0 go_dockerclient.AttachToContainerOptions) (go_dockerclient.CloseWaiter, error) {
 	ret := m.ctrl.Call(m, "AttachToContainerNonBlocking", arg0)
@@ -183,6 +195,18 @@ func (m *MockClient) StartContainer(arg0 string, arg1 *go_dockerclient.HostConfi
 // StartContainer indicates an expected call of StartContainer
 func (mr *MockClientMockRecorder) StartContainer(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartContainer", reflect.TypeOf((*MockClient)(nil).StartContainer), arg0, arg1)
+}
+
+// StartExec mocks base method
+func (m *MockClient) StartExec(arg0 string, arg1 go_dockerclient.StartExecOptions) error {
+	ret := m.ctrl.Call(m, "StartExec", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// StartExec indicates an expected call of StartExec
+func (mr *MockClientMockRecorder) StartExec(arg0, arg1 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartExec", reflect.TypeOf((*MockClient)(nil).StartExec), arg0, arg1)
 }
 
 // StartExecNonBlocking mocks base method

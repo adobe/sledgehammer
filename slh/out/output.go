@@ -31,7 +31,9 @@ type Output struct {
 }
 
 func (o *Output) Render() {
-	o.RenderFunc()
+	if o.Element != nil {
+		o.RenderFunc()
+	}
 }
 
 func (l *Output) RenderTable() {

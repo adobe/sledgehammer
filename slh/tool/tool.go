@@ -48,7 +48,26 @@ var (
 	// ErrorTypeInvalid will be thrown if the Type of the tool is inavlid
 	ErrorTypeInvalid = errors.New("Type is not valid")
 	// NameRegex is the pattern that all tool names must match
-	NameRegex = "^[a-zA-Z0-9-_]+$"
+	NameRegex   = "^[a-zA-Z0-9-_]+$"
+	restoreFunc = func(state *terminal.State, buffer *bytes.Buffer, out io.Writer) error {
+		if state != nil {
+			logrus.Infoln("Restoring terminal to original state")
+			err := terminal.Restore(int(os.Stdin.Fd()), state)
+			logrus.SetOutput(out)
+			logrus.Infoln("Sending buffered logs")
+			scanner := bufio.NewScanner(buffer)
+			for scanner.Scan() {
+				text := string(scanner.Bytes())
+				if len(text) > 0 {
+					fmt.Fprintln(out, text)
+				}
+			}
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
 )
 
 // JSON is the structure that will be stored in the database
@@ -581,22 +600,6 @@ func Execute(containerID string, opt *ExecutionOptions) (int, error) {
 	var state *terminal.State
 	var err error
 
-	restore := func() {
-		if state != nil {
-			logrus.Infoln("Restoring terminal to original state")
-			err := terminal.Restore(int(os.Stdin.Fd()), state)
-			if err != nil {
-				return
-			}
-			logrus.SetOutput(opt.IO.Out)
-			scanner := bufio.NewScanner(stdOut)
-			for scanner.Scan() {
-				text := string(scanner.Bytes())
-				fmt.Fprintln(opt.IO.Out, text)
-			}
-		}
-	}
-
 	workspace, err := utils.WorkingDirectory()
 	if err != nil {
 		return 1, err
@@ -618,14 +621,23 @@ func Execute(containerID string, opt *ExecutionOptions) (int, error) {
 	if os.Getuid() >= 0 && os.Getgid() >= 0 {
 		createExecConfig.User = strconv.Itoa(os.Getuid()) + ":" + strconv.Itoa(os.Getgid())
 	}
+
+	inP, outP, errP := preparePipes(opt.IO)
 	execConfig := docker.StartExecOptions{
-		ErrorStream:  opt.IO.Err,
-		InputStream:  opt.IO.In,
-		OutputStream: opt.IO.Out,
+		ErrorStream:  errP,
+		InputStream:  inP,
+		OutputStream: outP,
 		Tty:          !isPipe,
 	}
 	if !isPipe {
 		execConfig.RawTerminal = true
+	}
+
+	logrus.Debugln("Creating Exec")
+	exec, err := opt.Docker.Docker.CreateExec(createExecConfig)
+	if err != nil {
+		logrus.WithField("tool", opt.Tool.Data().Name).Errorln("Could not get logs from tool container: ", err.Error())
+		return 1, err
 	}
 
 	tty := terminal.IsTerminal(int(os.Stdin.Fd()))
@@ -639,24 +651,18 @@ func Execute(containerID string, opt *ExecutionOptions) (int, error) {
 		}
 	}
 
-	logrus.Debugln("Creating Exec")
-	exec, err := opt.Docker.Docker.CreateExec(createExecConfig)
-	if err != nil {
-		restore()
-		logrus.WithField("tool", opt.Tool.Data().Name).Errorln("Could not get logs from tool container: ", err.Error())
-		return 1, err
-	}
-
 	logrus.Debugln("Starting Exec")
-	waiter, err := opt.Docker.Docker.StartExecNonBlocking(exec.ID, execConfig)
+	err = opt.Docker.Docker.StartExec(exec.ID, execConfig)
 
 	if err != nil {
-		restore()
+		restoreFunc(state, stdOut, opt.IO.Out)
 		logrus.WithField("tool", opt.Tool.Data().Name).Errorln("Could not get logs from tool container: ", err.Error())
 		return 1, err
 	}
-	waiter.Wait()
-	restore()
+	err = restoreFunc(state, stdOut, opt.IO.Out)
+	if err != nil {
+		return 1, err
+	}
 
 	// get execute information for the exit code
 	execCon, err := opt.Docker.Docker.InspectExec(exec.ID)
@@ -673,22 +679,6 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 	isPipe := utils.IsPipe()
 
 	stdOut := &bytes.Buffer{}
-
-	restore := func() {
-		if state != nil {
-			logrus.Infoln("Restoring terminal to original state")
-			err := terminal.Restore(int(os.Stdin.Fd()), state)
-			if err != nil {
-				return
-			}
-			logrus.SetOutput(opt.IO.Out)
-			scanner := bufio.NewScanner(stdOut)
-			for scanner.Scan() {
-				text := string(scanner.Bytes())
-				fmt.Fprintln(opt.IO.Out, text)
-			}
-		}
-	}
 
 	workspace, err := utils.WorkingDirectory()
 	if err != nil {
@@ -719,7 +709,7 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 		HostConfig: &docker.HostConfig{
 			GroupAdd:    []string{"0"},
 			NetworkMode: "host",
-			AutoRemove:  false,
+			AutoRemove:  true,
 			Mounts:      utils.PrepareMounts(opt.Mounts),
 		},
 	})
@@ -727,7 +717,7 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 	if err != nil {
 		return 1, err
 	}
-
+	inP, outP, errP := preparePipes(opt.IO)
 	attachConfig := docker.AttachToContainerOptions{
 		Container:    resp.ID,
 		Logs:         true,
@@ -735,12 +725,17 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 		Stdout:       true,
 		Stdin:        true,
 		Stream:       true,
-		ErrorStream:  opt.IO.Err,
-		InputStream:  opt.IO.In,
-		OutputStream: opt.IO.Out,
+		ErrorStream:  errP,
+		InputStream:  inP,
+		OutputStream: outP,
 	}
 	if !isPipe {
 		attachConfig.RawTerminal = true
+	}
+
+	if err := opt.Docker.Docker.StartContainer(resp.ID, nil); err != nil {
+		logrus.WithField("tool", opt.Tool.Data().Name).Errorln("Could not start tool container")
+		return 1, err
 	}
 
 	tty := terminal.IsTerminal(int(os.Stdin.Fd()))
@@ -754,36 +749,24 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 		}
 	}
 
-	if err := opt.Docker.Docker.StartContainer(resp.ID, nil); err != nil {
-		logrus.WithField("tool", opt.Tool.Data().Name).Errorln("Could not start tool container")
-		return 1, err
-	}
-
 	logrus.Debugln("Attaching to container")
-	waiter, err := opt.Docker.Docker.AttachToContainerNonBlocking(attachConfig)
+	err = opt.Docker.Docker.AttachToContainer(attachConfig)
+	logrus.Debugln("Done attaching to container")
 
 	if err != nil {
-		restore()
+		restoreFunc(state, stdOut, opt.IO.Out)
 		logrus.WithField("tool", opt.Tool.Data().Name).Errorln("Could not get logs from tool container")
 		return 1, err
 	}
 
-	if waiter != nil {
-		logrus.Debugln("Waiting for container to be done...")
-		waiter.Wait()
-		logrus.Debugln("Done...")
-		restore()
+	logrus.Debugln("Done...")
+	err = restoreFunc(state, stdOut, opt.IO.Out)
+	if err != nil {
+		return 1, err
 	}
 
 	// get container information for the exit code
 	cont, err := opt.Docker.Docker.InspectContainer(resp.ID)
-	if err != nil {
-		return 1, err
-	}
-	err = opt.Docker.Docker.RemoveContainer(docker.RemoveContainerOptions{
-		Force: true,
-		ID:    resp.ID,
-	})
 	if err != nil {
 		return 1, err
 	}
@@ -816,4 +799,16 @@ func Exists(tools []Tool, tool Tool) bool {
 		}
 	}
 	return false
+}
+
+func preparePipes(cfg *config.IO) (io.Reader, io.Writer, io.Writer) {
+	inR, inW := io.Pipe()
+	outR, outW := io.Pipe()
+	errR, errW := io.Pipe()
+
+	go io.Copy(inW, cfg.In)
+	go io.Copy(cfg.Out, outR)
+	go io.Copy(cfg.Err, errR)
+
+	return inR, outW, errW
 }
