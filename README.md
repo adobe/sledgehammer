@@ -113,15 +113,19 @@ Details can be found in the [versioning documentation](./doc/VERSIONING.md).
 
 To build this project, you need Docker and Make:
 
-    make build
+    make ci
 
 This will generate an `adobe/slh` image locally which can then be installed as stated above.
 
-As Sledgehammer is a go project a valid command would also be:
+As Sledgehammer is a go project you can also place the repository in a valid go path (`<GOPATH>/src/github.com/adobe/sledgehammer`) and execute:
+
+    go test ./...
+
+To build the installer:
 
     cd installer && go build
 
-and
+or to build the slh executable:
 
     cd slh && go build
 
