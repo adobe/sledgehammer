@@ -41,7 +41,7 @@ func TestList(t *testing.T) {
 		{
 			name: "List, one entry",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -50,7 +50,7 @@ func TestList(t *testing.T) {
 				},
 			},
 			expected: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -62,14 +62,14 @@ func TestList(t *testing.T) {
 		{
 			name: "List, multiple entries",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "foo",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -78,14 +78,14 @@ func TestList(t *testing.T) {
 				},
 			},
 			expected: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "bar",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -148,7 +148,7 @@ func TestExists(t *testing.T) {
 		{
 			name: "One entry, nothing to find",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -162,7 +162,7 @@ func TestExists(t *testing.T) {
 		{
 			name: "One entry, one to find",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -176,14 +176,14 @@ func TestExists(t *testing.T) {
 		{
 			name: "Multiple entry, one to find",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "bar",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -197,14 +197,14 @@ func TestExists(t *testing.T) {
 		{
 			name: "Multiple entry, nothing to find",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "bar",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -266,7 +266,7 @@ func TestRemove(t *testing.T) {
 		{
 			name: "Nothing to remove",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -277,7 +277,7 @@ func TestRemove(t *testing.T) {
 			toRemove: "",
 			err:      registry.ErrorNoName,
 			expected: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -289,7 +289,7 @@ func TestRemove(t *testing.T) {
 		{
 			name: "One entry to remove",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -303,14 +303,14 @@ func TestRemove(t *testing.T) {
 		{
 			name: "Two entries to remove",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "bar",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -320,7 +320,7 @@ func TestRemove(t *testing.T) {
 			},
 			toRemove: "bar",
 			expected: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -377,21 +377,21 @@ func TestAdd(t *testing.T) {
 		{
 			name:       "Nothing to add",
 			registries: []registry.Registry{},
-			toAdd:      &registry.LocalRegistry{Core: registry.Data{}},
+			toAdd:      &registry.FileRegistry{Core: registry.Data{}},
 			expected:   []registry.Registry{},
 			err:        registry.ErrorNoName,
 		},
 		{
 			name:       "Nothing to add",
 			registries: []registry.Registry{},
-			toAdd:      &registry.LocalRegistry{Core: registry.Data{}},
+			toAdd:      &registry.FileRegistry{Core: registry.Data{}},
 			expected:   []registry.Registry{},
 			err:        registry.ErrorNoName,
 		},
 		{
 			name:       "Normal add, no entries",
 			registries: []registry.Registry{},
-			toAdd: &registry.LocalRegistry{
+			toAdd: &registry.FileRegistry{
 				Location: filepath.Join(pathToAdd, "foo.json"),
 				Core: registry.Data{
 					Type: registry.RegTypeLocal,
@@ -399,7 +399,7 @@ func TestAdd(t *testing.T) {
 				},
 			},
 			expected: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -411,7 +411,7 @@ func TestAdd(t *testing.T) {
 		{
 			name: "Normal add, one entry",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -419,7 +419,7 @@ func TestAdd(t *testing.T) {
 					},
 				},
 			},
-			toAdd: &registry.LocalRegistry{
+			toAdd: &registry.FileRegistry{
 				Location: filepath.Join(pathToAdd, "foo.json"),
 				Core: registry.Data{
 					Type: registry.RegTypeLocal,
@@ -427,14 +427,14 @@ func TestAdd(t *testing.T) {
 				},
 			},
 			expected: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "bar",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -446,14 +446,14 @@ func TestAdd(t *testing.T) {
 		{
 			name: "Normal add, multiple entry",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "bar",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "baz.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -461,7 +461,7 @@ func TestAdd(t *testing.T) {
 					},
 				},
 			},
-			toAdd: &registry.LocalRegistry{
+			toAdd: &registry.FileRegistry{
 				Location: filepath.Join(pathToAdd, "foo.json"),
 				Core: registry.Data{
 					Type: registry.RegTypeLocal,
@@ -469,21 +469,21 @@ func TestAdd(t *testing.T) {
 				},
 			},
 			expected: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "bar",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "baz.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
 						Name: "baz",
 					},
 				},
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "foo.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -495,7 +495,7 @@ func TestAdd(t *testing.T) {
 		{
 			name: "Duplicate add",
 			registries: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,
@@ -503,7 +503,7 @@ func TestAdd(t *testing.T) {
 					},
 				},
 			},
-			toAdd: &registry.LocalRegistry{
+			toAdd: &registry.FileRegistry{
 				Location: filepath.Join(pathToAdd, "bar.json"),
 				Core: registry.Data{
 					Type: registry.RegTypeLocal,
@@ -511,7 +511,7 @@ func TestAdd(t *testing.T) {
 				},
 			},
 			expected: []registry.Registry{
-				&registry.LocalRegistry{
+				&registry.FileRegistry{
 					Location: filepath.Join(pathToAdd, "bar.json"),
 					Core: registry.Data{
 						Type: registry.RegTypeLocal,

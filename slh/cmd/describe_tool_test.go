@@ -30,8 +30,8 @@ func TestDescribeTool(t *testing.T) {
 			Name: "Describe valid tool",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("describe tool foo"),
@@ -43,8 +43,8 @@ func TestDescribeTool(t *testing.T) {
 			Name: "Describe invalid tool",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("describe tool foobar"),

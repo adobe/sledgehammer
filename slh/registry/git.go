@@ -110,12 +110,43 @@ func (r *GitRegistry) Update() error {
 
 // Initialize will do the initial clone for the repository and will verify that there is a index.json
 func (r *GitRegistry) Initialize() error {
+
+	absPath, err := filepath.Abs(r.Repository)
+
+	if err != nil {
+		return r.initializeRemote()
+	}
+	st, err := os.Stat(absPath)
+	if os.IsNotExist(err) {
+		return r.initializeRemote()
+	}
+	if !st.IsDir() {
+		return ErrorNoValidRepositoryGiven
+	}
+	r.Repository = absPath
+	return r.initializeLocal()
+}
+
+func (r *GitRegistry) initializeLocal() error {
+	// git directory is already there locally, use that
+	r.Core.Path = r.Repository
+	return r.postInitialize()
+}
+
+func (r *GitRegistry) initializeRemote() error {
 	logrus.WithField("path", r.Core.Path).WithField("repository", r.Repository).Info("Cloning repository")
 	_, err := git.PlainClone(r.Core.Path, false, &git.CloneOptions{
 		URL: r.Repository,
 		// We only need the current status and pull from there on, history is not important
 		Depth: 1,
 	})
+	if err != nil {
+		return err
+	}
+	return r.postInitialize()
+}
+
+func (r *GitRegistry) postInitialize() error {
 	exists, err := utils.Exists(filepath.Join(r.Core.Path, "index.json"))
 	if err != nil {
 		return nil

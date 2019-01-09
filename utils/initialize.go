@@ -25,6 +25,9 @@ var (
 // ShouldInitialize will return if this is the first run of the tool
 func ShouldInitialize(cfg *config.Config) (bool, error) {
 	logrus.Info("Checking if initialize is needed")
+	if cfg.Initialized {
+		return false, nil
+	}
 	db, err := cfg.OpenDatabase()
 	if err != nil {
 		return false, err

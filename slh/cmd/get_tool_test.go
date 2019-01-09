@@ -39,8 +39,8 @@ func TestGetTool(t *testing.T) {
 			Name: "Existing registries",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("cr reg local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"Name", "Type", "Maintainer", "foo", "local"},
+					Cmd: fmt.Sprintf("cr reg file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"Name", "Type", "Maintainer", "foo", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("get to"),
@@ -52,13 +52,34 @@ func TestGetTool(t *testing.T) {
 			Name: "Search",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("cr reg local %s", filepath.Join(pathToCreate, "baz.json")),
-					Has: []string{"Name", "Type", "Maintainer", "baz", "local"},
+					Cmd: fmt.Sprintf("cr reg file %s", filepath.Join(pathToCreate, "baz.json")),
+					Has: []string{"Name", "Type", "Maintainer", "baz", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("get to ba"),
 					Has: []string{"Name", "Registry", "Installed", "baz"},
 					Not: []string{"foo"},
+				},
+			},
+		},
+		{
+			Name: "Multiple registries",
+			Steps: []*test.Step{
+				{
+					Cmd: fmt.Sprintf("cr reg file %s --name baz1", filepath.Join(pathToCreate, "baz.json")),
+					Has: []string{"Name", "Type", "Maintainer", "baz1", "file"},
+				},
+				{
+					Cmd: fmt.Sprintf("cr reg file %s --name baz2", filepath.Join(pathToCreate, "baz.json")),
+					Has: []string{"Name", "Type", "Maintainer", "baz2", "file"},
+				},
+				{
+					Cmd: fmt.Sprintf("cr reg file %s --name baz3", filepath.Join(pathToCreate, "baz.json")),
+					Has: []string{"Name", "Type", "Maintainer", "baz3", "file"},
+				},
+				{
+					Cmd: fmt.Sprintf("get to"),
+					Has: []string{"Name", "Registry", "Installed", "baz1", "baz2", "baz3", "foo"},
 				},
 			},
 		},

@@ -37,13 +37,14 @@ type Docker struct {
 // Config is the main config struct for the app.
 // All needed access handlers are defined here
 type Config struct {
-	db         *bolt.DB
-	ownsDB     bool
-	IO         *IO
-	OutputType string
-	ConfigDir  string
-	Output     *out.Output
-	ExitCode   int
+	db          *bolt.DB
+	ownsDB      bool
+	IO          *IO
+	OutputType  string
+	ConfigDir   string
+	Output      *out.Output
+	ExitCode    int
+	Initialized bool
 	Docker
 }
 

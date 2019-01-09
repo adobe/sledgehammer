@@ -30,8 +30,8 @@ func TestUpdate(t *testing.T) {
 			Name: "Update a tool",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("cr reg local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("cr reg file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("describe to real"),

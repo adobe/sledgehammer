@@ -39,8 +39,8 @@ func TestRun(t *testing.T) {
 			Name: "Success",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("run real"),
@@ -52,8 +52,8 @@ func TestRun(t *testing.T) {
 			Name: "Success with a version",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("run alpine-test-version --version 3.7"),
@@ -65,8 +65,8 @@ func TestRun(t *testing.T) {
 			Name: "Success with update",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("run real --update"),
@@ -78,8 +78,8 @@ func TestRun(t *testing.T) {
 			Name: "Success with arguments",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("run argument-test -a FOOBAR!!!"),
@@ -91,8 +91,8 @@ func TestRun(t *testing.T) {
 			Name: "Success with daemon tool",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("run real-daemon"),
