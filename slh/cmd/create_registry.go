@@ -42,7 +42,7 @@ func CreateRegistryCommand(cfg *config.Config) *cobra.Command {
 		Long: `Will create a given registry to Sledgehammer. 
 Currently supported registries are local|git|url.
 
-Local: registry local <path> 
+File: registry file <path> 
 Git: registry git <repository>
 URL: registry url <url>`,
 		Aliases: []string{"reg", "registries"},

@@ -29,7 +29,7 @@ import (
 
 var (
 	// ErrorEmptyPathGiven will be thrown if the given path is not valid
-	ErrorEmptyPathGiven = errors.New("No path given... call it with 'local <path>'")
+	ErrorEmptyPathGiven = errors.New("No path given... call it with 'file <path>'")
 	// ErrorNoValidPathGiven will be thrown if the given path is not valid
 	ErrorNoValidPathGiven = errors.New("The given path is not valid")
 )
@@ -37,30 +37,33 @@ var (
 // RegTypeLocal is the type of this registry
 const RegTypeLocal = "local"
 
-// LocalRegistry represents a registry where the tools are stored on a local filesystem.
+// RegTypeFile is the type of this registry
+const RegTypeFile = "file"
+
+// FileRegistry represents a registry where the tools are stored on a local filesystem.
 // This is mostly useful for development of tools, registries and sledgehammer itself.
-type LocalRegistry struct {
+type FileRegistry struct {
 	Location string `json:"location"`
 	Core     Data   `json:"core"`
 }
 
-// LocalFactory is the factory for the LocalRegistry
-type LocalFactory struct{}
+// FileFactory is the factory for the FileRegistry
+type FileFactory struct{}
 
 // Raw will return a raw GitRepository struct for populating from the db
-func (g *LocalFactory) Raw() Registry {
-	return &LocalRegistry{}
+func (g *FileFactory) Raw() Registry {
+	return &FileRegistry{}
 }
 
 // Remove will be called when the registry should be removed.
 // It will actually do nothing as we do not touch the original file
-func (r *LocalRegistry) Remove() error {
+func (r *FileRegistry) Remove() error {
 	// do nothing
 	return nil
 }
 
-// Create will take data and return a LocalRegistry from the given arguments
-func (g *LocalFactory) Create(d Data, args []string) (Registry, error) {
+// Create will take data and return a FileRegistry from the given arguments
+func (g *FileFactory) Create(d Data, args []string) (Registry, error) {
 	if len(args) == 0 {
 		return nil, ErrorEmptyPathGiven
 	}
@@ -75,8 +78,8 @@ func (g *LocalFactory) Create(d Data, args []string) (Registry, error) {
 	if len(d.Name) == 0 {
 		d.Name = strings.Replace(filepath.Base(args[0]), filepath.Ext(args[0]), "", 1)
 	}
-	d.Type = RegTypeLocal
-	reg := &LocalRegistry{
+	d.Type = RegTypeFile
+	reg := &FileRegistry{
 		Core:     d,
 		Location: absPath,
 	}
@@ -85,7 +88,7 @@ func (g *LocalFactory) Create(d Data, args []string) (Registry, error) {
 }
 
 // Tools will return all tools that are stored in the json file that this registry points to
-func (r LocalRegistry) Tools() ([]tool.Tool, error) {
+func (r FileRegistry) Tools() ([]tool.Tool, error) {
 	tools := []tool.Tool{}
 
 	registry, err := r.readRegistry()
@@ -119,7 +122,7 @@ func (r LocalRegistry) Tools() ([]tool.Tool, error) {
 }
 
 // Kits will return all kits that the are stated in the registry.
-func (r LocalRegistry) Kits() ([]kit.Kit, error) {
+func (r FileRegistry) Kits() ([]kit.Kit, error) {
 	kits := []kit.Kit{}
 
 	// reg, err := r.readRegistry()
@@ -150,22 +153,22 @@ func (r LocalRegistry) Kits() ([]kit.Kit, error) {
 }
 
 // Data return the data of the registry
-func (r *LocalRegistry) Data() *Data {
+func (r *FileRegistry) Data() *Data {
 	return &r.Core
 }
 
 // Info will show some detailed information about the registry
-func (r *LocalRegistry) Info(ct *out.Container) {
+func (r *FileRegistry) Info(ct *out.Container) {
 	ct.Add(out.NewValue("Location", r.Location))
 }
 
 // Update will do nothing as the file is already on the disk, we just need to read it again
-func (r *LocalRegistry) Update() error {
+func (r *FileRegistry) Update() error {
 	return nil
 }
 
-// Initialize will do nothing for a local registry
-func (r *LocalRegistry) Initialize() error {
+// Initialize will do nothing for a file registry
+func (r *FileRegistry) Initialize() error {
 	jsonReg, err := r.readRegistry()
 	if err != nil {
 		return err
@@ -175,13 +178,13 @@ func (r *LocalRegistry) Initialize() error {
 	return nil
 }
 
-func (r *LocalRegistry) readRegistry() (*contracts.Registry, error) {
+func (r *FileRegistry) readRegistry() (*contracts.Registry, error) {
 	registry := &contracts.Registry{}
 
 	if len(r.Location) == 0 {
 		return nil, ErrorNoValidPathGiven
 	}
-	logrus.WithField("location", r.Location).Debug("Retreiving tools from local registry")
+	logrus.WithField("location", r.Location).Debug("Retreiving tools from file registry")
 
 	// read json
 	// get content

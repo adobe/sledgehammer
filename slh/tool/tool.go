@@ -600,7 +600,7 @@ func Execute(containerID string, opt *ExecutionOptions) (int, error) {
 	var state *terminal.State
 	var err error
 
-	workspace, err := utils.WorkingDirectory()
+	workspace, err := utils.WorkingDirectory(opt.Mounts)
 	if err != nil {
 		return 1, err
 	}
@@ -680,7 +680,7 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 
 	stdOut := &bytes.Buffer{}
 
-	workspace, err := utils.WorkingDirectory()
+	workspace, err := utils.WorkingDirectory(opt.Mounts)
 	if err != nil {
 		return 1, err
 	}

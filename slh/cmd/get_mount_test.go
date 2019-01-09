@@ -15,17 +15,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/mitchellh/go-homedir"
+	"github.com/docker/docker/pkg/homedir"
 
 	"github.com/adobe/sledgehammer/utils/test"
 )
 
 func TestGetMount(t *testing.T) {
 	pathToCreate := test.NewTmpDir(t)
-	home, err := homedir.Dir()
-	if err != nil {
-		t.Fatal(err)
-	}
+	home := homedir.Get()
 	defer test.DeleteTmpDir(pathToCreate, t)
 
 	cases := []*test.TestCase{
@@ -53,7 +50,8 @@ func TestGetMount(t *testing.T) {
 			},
 		},
 		{
-			Name: "Default homedir",
+			Name:             "Default homedir",
+			ShouldInitialize: true,
 			Steps: []*test.Step{
 				{
 					Cmd: fmt.Sprintf("get mounts"),

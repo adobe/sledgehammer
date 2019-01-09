@@ -32,8 +32,17 @@ func TestCreateRegistry(t *testing.T) {
 			Name: "Valid registry foo",
 			Steps: []*test.Step{
 				{
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"foo", "file", "plaschke@adobe.com"},
+				},
+			},
+		},
+		{
+			Name: "Valid registry foo - local",
+			Steps: []*test.Step{
+				{
 					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"foo", "local", "plaschke@adobe.com"},
+					Has: []string{"foo", "file", "plaschke@adobe.com"},
 				},
 			},
 		},
@@ -41,8 +50,8 @@ func TestCreateRegistry(t *testing.T) {
 			Name: "Valid registry bar",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "bar.json")),
-					Has: []string{"bar", "local", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "bar.json")),
+					Has: []string{"bar", "file", "plaschke@adobe.com"},
 				},
 			},
 		},
@@ -50,7 +59,7 @@ func TestCreateRegistry(t *testing.T) {
 			Name: "Invalid registry foobar",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foobar.json")),
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foobar.json")),
 					Has: []string{registry.ErrorNoValidPathGiven.Error()},
 				},
 			},
@@ -59,11 +68,11 @@ func TestCreateRegistry(t *testing.T) {
 			Name: "Invalid registry with same name",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "bar.json")),
-					Has: []string{"bar", "local", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "bar.json")),
+					Has: []string{"bar", "file", "plaschke@adobe.com"},
 				},
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "bar.json")),
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "bar.json")),
 					Has: []string{registry.ErrorAlreadyExists.Error()},
 				},
 			},
@@ -72,12 +81,25 @@ func TestCreateRegistry(t *testing.T) {
 			Name: "Valid registry with same name -- overwrite",
 			Steps: []*test.Step{
 				{
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "bar.json")),
+					Has: []string{"bar", "file", "plaschke@adobe.com"},
+				},
+				{
+					Cmd: fmt.Sprintf("create registry file %s --name bar2", filepath.Join(pathToCreate, "bar.json")),
+					Has: []string{"bar", "bar2", "...", "file", "plaschke@adobe.com"},
+				},
+			},
+		},
+		{
+			Name: "Valid registry with same name -- overwrite - local",
+			Steps: []*test.Step{
+				{
 					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "bar.json")),
-					Has: []string{"bar", "local", "plaschke@adobe.com"},
+					Has: []string{"bar", "file", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("create registry local %s --name bar2", filepath.Join(pathToCreate, "bar.json")),
-					Has: []string{"bar", "bar2", "...", "local", "plaschke@adobe.com"},
+					Has: []string{"bar", "bar2", "...", "file", "plaschke@adobe.com"},
 				},
 			},
 		},
@@ -94,12 +116,12 @@ func TestCreateRegistry(t *testing.T) {
 			Name: "Force creation",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "bar.json")),
-					Has: []string{"bar", "local", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "bar.json")),
+					Has: []string{"bar", "file", "plaschke@adobe.com"},
 				},
 				{
-					Cmd: fmt.Sprintf("create registry local %s --force", filepath.Join(pathToCreate, "bar.json")),
-					Has: []string{"bar", "local", "local", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s --force", filepath.Join(pathToCreate, "bar.json")),
+					Has: []string{"bar", "file", "file", "plaschke@adobe.com"},
 					Not: []string{"..."},
 				},
 			},

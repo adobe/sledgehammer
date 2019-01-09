@@ -31,7 +31,7 @@ func TestDeleteRegistry(t *testing.T) {
 			Steps: []*test.Step{
 				{
 					Cmd: fmt.Sprintf("delete registry default"),
-					Not: []string{"local", "foo", "plaschke@adobe.com"},
+					Not: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 			},
 		},
@@ -39,16 +39,16 @@ func TestDeleteRegistry(t *testing.T) {
 			Name: "Delete valid registries",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("delete registry foo"),
-					Not: []string{"local", "foo"},
+					Not: []string{"file", "foo"},
 				},
 				{
 					Cmd: fmt.Sprintf("delete registry default"),
-					Not: []string{"local", "foo", "plaschke@adobe.com"},
+					Not: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 			},
 		},
@@ -56,8 +56,8 @@ func TestDeleteRegistry(t *testing.T) {
 			Name: "Delete invalid registry",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("delete registry foobar"),

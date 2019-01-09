@@ -39,12 +39,12 @@ func TestGetRegistry(t *testing.T) {
 			Name: "Existing registries",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("cr reg local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"Name", "Type", "Maintainer", "foo", "local"},
+					Cmd: fmt.Sprintf("cr reg file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"Name", "Type", "Maintainer", "foo", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("get reg"),
-					Has: []string{"Name", "Type", "Maintainer", "foo", "local"},
+					Has: []string{"Name", "Type", "Maintainer", "foo", "file"},
 				},
 			},
 		},

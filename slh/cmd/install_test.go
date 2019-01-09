@@ -46,8 +46,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Alias does already exist",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real -o json"),
@@ -68,8 +68,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Symlink does already exist",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real"),
@@ -92,8 +92,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Success with tool name only",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real -o json"),
@@ -109,8 +109,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Success with registry and tool name",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real/real -o json"),
@@ -126,8 +126,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Alias does already exist, force overwrite",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real -o json"),
@@ -147,8 +147,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Symlink does already exist, force overwrite",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real -o json --force"),
@@ -167,8 +167,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Success with different name",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real --alias foobar -o json"),
@@ -184,8 +184,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Success with given version",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real -o json --version ~1.0"),
@@ -217,8 +217,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Install kits with registry name",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"Name", "Type", "Maintainer", "foo", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"Name", "Type", "Maintainer", "foo", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install foo/foo-kit --kit -o json"),
@@ -234,8 +234,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Install kits without registry name",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"Name", "Type", "Maintainer", "foo", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"Name", "Type", "Maintainer", "foo", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install foo-kit --kit -o json"),
@@ -251,8 +251,8 @@ func TestInstallTool(t *testing.T) {
 			Name: "Install with slh as alias",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real --alias slh"),

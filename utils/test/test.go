@@ -90,8 +90,9 @@ func DeleteTmpDir(path string, t *testing.T) {
 }
 
 type TestCase struct {
-	Name  string
-	Steps []*Step
+	Name             string
+	Steps            []*Step
+	ShouldInitialize bool
 }
 
 func DoTest(t *testing.T, cases []*TestCase) {
@@ -122,7 +123,8 @@ func DoTest(t *testing.T, cases []*TestCase) {
 					Docker: config.Docker{
 						Docker: docker,
 					},
-					ConfigDir: path,
+					ConfigDir:   path,
+					Initialized: !tt.ShouldInitialize,
 				}
 				if st.DoBefore != nil {
 					st.DoBefore(cfg)

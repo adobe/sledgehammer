@@ -136,10 +136,20 @@ func ImportPath(path string) string {
 	return path
 }
 
-func WorkingDirectory() (string, error) {
+func WorkingDirectory(mounts []string) (string, error) {
 	workspace, err := os.Getwd()
 	if err != nil {
 		return "", err
+	}
+	found := false
+	for _, m := range mounts {
+		if strings.Contains(workspace, m) {
+			found = true
+		}
+	}
+	// If no mount can be found that contains the current working directory, then pass no working directory
+	if !found {
+		return "", nil
 	}
 	return ContainerPath(filepath.ToSlash(workspace)), nil
 }

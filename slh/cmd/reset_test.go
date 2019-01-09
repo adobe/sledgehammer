@@ -29,8 +29,8 @@ func TestReset(t *testing.T) {
 			Name: "Reset a valid tool",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "real.json")),
-					Has: []string{"Name", "Type", "Maintainer", "real", "local"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "real.json")),
+					Has: []string{"Name", "Type", "Maintainer", "real", "file"},
 				},
 				{
 					Cmd: fmt.Sprintf("install real -o json"),

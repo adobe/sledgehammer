@@ -31,8 +31,8 @@ func TestDescribeKit(t *testing.T) {
 			Name: "Describe valid kit",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: "describe kit foo/foo-kit",
@@ -44,8 +44,8 @@ func TestDescribeKit(t *testing.T) {
 			Name: "Describe invalid kit",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("describe kit foobar"),
@@ -58,8 +58,8 @@ func TestDescribeKit(t *testing.T) {
 			Name: "Describe kit with invalid registry",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("describe kit foo/bar"),

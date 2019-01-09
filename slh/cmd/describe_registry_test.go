@@ -30,12 +30,12 @@ func TestDescribeRegistry(t *testing.T) {
 			Name: "Describe valid registry",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("describe registry foo"),
-					Has: []string{"local", "foo", "plaschke@adobe.com", "Tools", "Last_Update"},
+					Has: []string{"file", "foo", "plaschke@adobe.com", "Tools", "Last_Update"},
 				},
 			},
 		},
@@ -43,8 +43,8 @@ func TestDescribeRegistry(t *testing.T) {
 			Name: "Describe invalid registry",
 			Steps: []*test.Step{
 				{
-					Cmd: fmt.Sprintf("create registry local %s", filepath.Join(pathToCreate, "foo.json")),
-					Has: []string{"local", "foo", "plaschke@adobe.com"},
+					Cmd: fmt.Sprintf("create registry file %s", filepath.Join(pathToCreate, "foo.json")),
+					Has: []string{"file", "foo", "plaschke@adobe.com"},
 				},
 				{
 					Cmd: fmt.Sprintf("describe registry foobar"),

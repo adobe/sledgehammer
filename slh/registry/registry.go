@@ -31,7 +31,8 @@ var (
 	// Types is a factory function to bootstrap different registries
 	Types = map[string]Factory{
 		RegTypeGit:   &GitFactory{},
-		RegTypeLocal: &LocalFactory{},
+		RegTypeLocal: &FileFactory{},
+		RegTypeFile:  &FileFactory{},
 		RegTypeURL:   &URLFactory{},
 	}
 	// ErrorNoName will be thrown if a registry has no name, which is required
@@ -42,7 +43,7 @@ var (
 	ErrorRegistryNotFound = errors.New("Registry not found")
 	// RegistryUpdateInterval is the interval after that a registry will automatically update their tools. This can be forced
 	RegistryUpdateInterval = 24 * time.Hour
-	// DefaultRegistryURL is the URL of the default regsistry. It will be added on the first run only.
+	// DefaultRegistryURL is the URL of the default registry. It will be added on the first run only.
 	DefaultRegistryURL = "https://github.com/adobe/sledgehammer-registry.git"
 )
 

@@ -14,20 +14,17 @@ package mount_test
 import (
 	"testing"
 
+	"github.com/docker/docker/pkg/homedir"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/adobe/sledgehammer/slh/config"
 	"github.com/adobe/sledgehammer/slh/mount"
 	"github.com/adobe/sledgehammer/utils/test"
-	homedir "github.com/mitchellh/go-homedir"
 )
 
 func TestList(t *testing.T) {
 
-	home, err := homedir.Dir()
-	if err != nil {
-		t.Fatal(err)
-	}
+	home := homedir.Get()
 
 	cases := []struct {
 		name     string
@@ -79,10 +76,7 @@ func TestList(t *testing.T) {
 
 func TestAdd(t *testing.T) {
 
-	home, err := homedir.Dir()
-	if err != nil {
-		t.Fatal(err)
-	}
+	home := homedir.Get()
 
 	cases := []struct {
 		name     string
@@ -147,10 +141,7 @@ func TestAdd(t *testing.T) {
 
 func TestRemove(t *testing.T) {
 
-	home, err := homedir.Dir()
-	if err != nil {
-		t.Fatal(err)
-	}
+	home := homedir.Get()
 
 	cases := []struct {
 		name     string
