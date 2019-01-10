@@ -806,9 +806,18 @@ func preparePipes(cfg *config.IO) (io.Reader, io.Writer, io.Writer) {
 	outR, outW := io.Pipe()
 	errR, errW := io.Pipe()
 
-	go io.Copy(inW, cfg.In)
-	go io.Copy(cfg.Out, outR)
-	go io.Copy(cfg.Err, errR)
+	go func() {
+		defer inW.Close()
+		io.Copy(inW, cfg.In)
+	}()
+	go func() {
+		defer outW.Close()
+		io.Copy(cfg.Out, outR)
+	}()
+	go func() {
+		defer errW.Close()
+		io.Copy(cfg.Err, errR)
+	}()
 
 	return inR, outW, errW
 }

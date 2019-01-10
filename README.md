@@ -113,7 +113,8 @@ Details can be found in the [versioning documentation](./doc/VERSIONING.md).
 
 To build this project, you need Docker and Make:
 
-    make ci
+    make pr     # will just test the project
+    make ci     # will build the docker image
 
 This will generate an `adobe/slh` image locally which can then be installed as stated above.
 
