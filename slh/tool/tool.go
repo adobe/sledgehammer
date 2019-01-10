@@ -709,7 +709,7 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 		HostConfig: &docker.HostConfig{
 			GroupAdd:    []string{"0"},
 			NetworkMode: "host",
-			AutoRemove:  true,
+			AutoRemove:  false,
 			Mounts:      utils.PrepareMounts(opt.Mounts),
 		},
 	})
@@ -770,6 +770,11 @@ func StartAndExecute(opt *ExecutionOptions) (int, error) {
 	if err != nil {
 		return 1, err
 	}
+
+	opt.Docker.Docker.RemoveContainer(docker.RemoveContainerOptions{
+		Force: true,
+		ID:    resp.ID,
+	})
 
 	return cont.State.ExitCode, nil
 }
