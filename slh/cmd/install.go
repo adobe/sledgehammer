@@ -56,7 +56,7 @@ func InstallCommand(cfg *config.Config) *cobra.Command {
 	}
 
 	installCommand.Flags().StringVar(&installCmd.alias, "alias", "", "The alias which should be used. It then can be called by this alias (e.g. py2)")
-	installCommand.Flags().StringVar(&installCmd.version, "version", "latest", "The version constraint that should be used (e.g. '^2' to stay on major version 2).")
+	installCommand.Flags().StringVar(&installCmd.version, "version", "", "The version constraint that should be used (e.g. '^2' to stay on major version 2).")
 	installCommand.Flags().BoolVar(&installCmd.force, "force", false, "True if the installation should be forced. Will overwrite previous installed tools.")
 	installCommand.Flags().BoolVar(&installCmd.isKit, "kit", false, "True if the type is a kit that should be installed")
 
