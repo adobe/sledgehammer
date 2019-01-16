@@ -99,12 +99,16 @@ func NewOutput(cfg *Config) *out.Output {
 	switch cfg.OutputType {
 	default:
 		o.RenderFunc = o.RenderTable
+		o.ProgressFunc = o.TextProgressFunc
 	case "text":
 		o.RenderFunc = o.RenderTable
+		o.ProgressFunc = o.TextProgressFunc
 	case "table":
 		o.RenderFunc = o.RenderTable
+		o.ProgressFunc = o.NoProgressFunc
 	case "json":
 		o.RenderFunc = o.RenderJSON
+		o.ProgressFunc = o.NoProgressFunc
 	}
 	return o
 }

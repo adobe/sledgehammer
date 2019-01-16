@@ -24,10 +24,11 @@ type Renderer interface {
 }
 
 type Output struct {
-	Writer     io.Writer
-	RenderFunc func()
-	Element    Renderer
-	ExitCode   int
+	Writer       io.Writer
+	RenderFunc   func()
+	ProgressFunc func(string)
+	Element      Renderer
+	ExitCode     int
 }
 
 func (o *Output) Render() {
@@ -36,11 +37,23 @@ func (o *Output) Render() {
 	}
 }
 
+func (o *Output) Progress(text string) {
+	if o.ProgressFunc != nil {
+		o.ProgressFunc(text)
+	}
+}
+
 func (l *Output) RenderTable() {
 	tw := &tabwriter.Writer{}
 	tw = tw.Init(l.Writer, 0, 0, 3, ' ', 0)
 	l.Element.Table(tw)
 	tw.Flush()
+}
+
+func (l *Output) TextProgressFunc(text string) {
+	fmt.Fprintln(l.Writer, text)
+}
+func (l *Output) NoProgressFunc(text string) {
 }
 
 func (l *Output) RenderJSON() {

@@ -166,6 +166,8 @@ func (cmd *installCommand) InstallTool(cfg *config.Config) error {
 		}
 	}
 
+	cfg.Output.Progress(fmt.Sprintf("Installing tool %s", cmd.alias))
+
 	err = aliases.Add(alias.Alias{
 		Name:     cmd.alias,
 		Registry: to.Data().Registry,
