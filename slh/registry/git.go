@@ -117,7 +117,7 @@ func (r *GitRegistry) Initialize() error {
 		return r.initializeRemote()
 	}
 	st, err := os.Stat(absPath)
-	if os.IsNotExist(err) {
+	if st == nil || os.IsNotExist(err) {
 		return r.initializeRemote()
 	}
 	if !st.IsDir() {
