@@ -6,6 +6,12 @@ Sledgehammer [![Build Status](https://travis-ci.com/adobe/sledgehammer.svg?token
 `Sledgehammer` is a lightweight wrapper around docker to offer you native tools executed in docker containers.
 It has been created to support dependency isolated executions and reduces the need to install tools locally.
 
+## Pre-requisites
+
+ - [Docker](https://hub.docker.com/search/?type=edition&offering=community)
+
+ Check that your Docker is version `17.12` or later, which will have the required [Docker API 1.35](https://docs.docker.com/develop/sdk/#api-version-matrix). Run `docker version` to check your Docker version.
+
 ### Installation
 
 You can start the installation of Sledgehammer with the following command:
