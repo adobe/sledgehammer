@@ -95,7 +95,6 @@ func PrepareEnvironment(envs []string) []string {
 
 OUTER:
 	for _, env := range envs {
-		// simple blacklist for windows atm
 		if strings.HasPrefix(env, "=") {
 			continue OUTER
 		}
